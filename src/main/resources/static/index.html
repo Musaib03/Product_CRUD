@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product CRUD Application</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 2.5em;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 10px;
+            background: #f8f9fa;
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 600;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            padding: 12px 25px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            border-left: 5px solid #667eea;
+            white-space: pre-wrap;
+            font-family: 'Courier New', monospace;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .products-table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .products-table th {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .products-table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .products-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .success-message {
+            color: #28a745;
+            font-weight: 600;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-weight: 600;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛍️ Product CRUD Application</h1>
+
+        <!-- GET All Products -->
+        <div class="section">
+            <h2>📋 Get All Products</h2>
+            <button class="btn-primary" onclick="getAllProducts()">Get All Products</button>
+            <div id="productsDisplay"></div>
+        </div>
+
+        <!-- GET Product by ID -->
+        <div class="section">
+            <h2>🔍 Get Product by ID</h2>
+            <div class="form-group">
+                <label for="getProductId">Product ID:</label>
+                <input type="number" id="getProductId" placeholder="Enter product ID (e.g., 1011)">
+            </div>
+            <button class="btn-primary" onclick="getProductById()">Get Product</button>
+        </div>
+
+        <!-- POST - Create Product -->
+        <div class="section">
+            <h2>➕ Create New Product</h2>
+            <div class="form-group">
+                <label for="createId">Product ID:</label>
+                <input type="number" id="createId" placeholder="Enter product ID">
+            </div>
+            <div class="form-group">
+                <label for="createName">Product Name:</label>
+                <input type="text" id="createName" placeholder="Enter product name">
+            </div>
+            <div class="form-group">
+                <label for="createPrice">Price:</label>
+                <input type="number" id="createPrice" step="0.01" placeholder="Enter price">
+            </div>
+            <button class="btn-success" onclick="createProduct()">Create Product</button>
+        </div>
+
+        <!-- PUT - Update Product -->
+        <div class="section">
+            <h2>✏️ Update Product</h2>
+            <div class="form-group">
+                <label for="updateId">Product ID (to update):</label>
+                <input type="number" id="updateId" placeholder="Enter product ID to update">
+            </div>
+            <div class="form-group">
+                <label for="updateName">New Product Name:</label>
+                <input type="text" id="updateName" placeholder="Enter new product name">
+            </div>
+            <div class="form-group">
+                <label for="updatePrice">New Price:</label>
+                <input type="number" id="updatePrice" step="0.01" placeholder="Enter new price">
+            </div>
+            <button class="btn-warning" onclick="updateProduct()">Update Product</button>
+        </div>
+
+        <!-- DELETE Product -->
+        <div class="section">
+            <h2>🗑️ Delete Product</h2>
+            <div class="form-group">
+                <label for="deleteId">Product ID:</label>
+                <input type="number" id="deleteId" placeholder="Enter product ID to delete">
+            </div>
+            <button class="btn-danger" onclick="deleteProduct()">Delete Product</button>
+        </div>
+
+        <!-- Result Display -->
+        <div class="section">
+            <h2>📤 Response</h2>
+            <div id="result">Results will appear here...</div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = '/products';
+
+        function displayResult(message, isError = false) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `<span class="${isError ? 'error-message' : 'success-message'}">${message}</span>`;
+        }
+
+        function displayProducts(products) {
+            const productsDisplay = document.getElementById('productsDisplay');
+            if (!products || products.length === 0) {
+                productsDisplay.innerHTML = '<p>No products found.</p>';
+                return;
+            }
+
+            let html = `
+                <table class="products-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            products.forEach(product => {
+                html += `
+                    <tr>
+                        <td>${product.id}</td>
+                        <td>${product.name}</td>
+                        <td>₹${product.price.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                    </tbody>
+                </table>
+            `;
+
+            productsDisplay.innerHTML = html;
+        }
+
+        // GET all products
+        async function getAllProducts() {
+            try {
+                const response = await fetch(API_BASE_URL);
+                const data = await response.json();
+                displayResult(`Successfully retrieved ${data.length} products`);
+                displayProducts(data);
+            } catch (error) {
+                displayResult(`Error: ${error.message}`, true);
+            }
+        }
+
+        // GET product by ID
+        async function getProductById() {
+            const id = document.getElementById('getProductId').value;
+            if (!id) {
+                displayResult('Please enter a product ID', true);
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/${id}`);
+                if (response.status === 404) {
+                    displayResult(`Product with ID ${id} not found`, true);
+                    return;
+                }
+                const data = await response.json();
+                displayResult(`Product found:\n${JSON.stringify(data, null, 2)}`);
+            } catch (error) {
+                displayResult(`Error: ${error.message}`, true);
+            }
+        }
+
+        // POST - Create product
+        async function createProduct() {
+            const id = document.getElementById('createId').value;
+            const name = document.getElementById('createName').value;
+            const price = document.getElementById('createPrice').value;
+
+            if (!id || !name || !price) {
+                displayResult('Please fill in all fields', true);
+                return;
+            }
+
+            const product = {
+                id: parseInt(id),
+                name: name,
+                price: parseFloat(price)
+            };
+
+            try {
+                const response = await fetch(API_BASE_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(product)
+                });
+
+                const data = await response.json();
+                displayResult(`Product created successfully!\n${JSON.stringify(data, null, 2)}`);
+
+                // Clear form
+                document.getElementById('createId').value = '';
+                document.getElementById('createName').value = '';
+                document.getElementById('createPrice').value = '';
+
+                // Refresh product list
+                getAllProducts();
+            } catch (error) {
+                displayResult(`Error: ${error.message}`, true);
+            }
+        }
+
+        // PUT - Update product
+        async function updateProduct() {
+            const id = document.getElementById('updateId').value;
+            const name = document.getElementById('updateName').value;
+            const price = document.getElementById('updatePrice').value;
+
+            if (!id || !name || !price) {
+                displayResult('Please fill in all fields', true);
+                return;
+            }
+
+            const product = {
+                id: parseInt(id),
+                name: name,
+                price: parseFloat(price)
+            };
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(product)
+                });
+
+                if (response.status === 404) {
+                    displayResult(`Product with ID ${id} not found`, true);
+                    return;
+                }
+
+                const data = await response.json();
+                displayResult(`Product updated successfully!\n${JSON.stringify(data, null, 2)}`);
+
+                // Clear form
+                document.getElementById('updateId').value = '';
+                document.getElementById('updateName').value = '';
+                document.getElementById('updatePrice').value = '';
+
+                // Refresh product list
+                getAllProducts();
+            } catch (error) {
+                displayResult(`Error: ${error.message}`, true);
+            }
+        }
+
+        // DELETE product
+        async function deleteProduct() {
+            const id = document.getElementById('deleteId').value;
+            if (!id) {
+                displayResult('Please enter a product ID', true);
+                return;
+            }
+
+            if (!confirm(`Are you sure you want to delete product with ID ${id}?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.status === 404) {
+                    displayResult(`Product with ID ${id} not found`, true);
+                    return;
+                }
+
+                if (response.status === 204) {
+                    displayResult(`Product with ID ${id} deleted successfully!`);
+                    document.getElementById('deleteId').value = '';
+                    // Refresh product list
+                    getAllProducts();
+                }
+            } catch (error) {
+                displayResult(`Error: ${error.message}`, true);
+            }
+        }
+
+        // Load products on page load
+        window.onload = function() {
+            getAllProducts();
+        };
+    </script>
+</body>
+</html>
+
