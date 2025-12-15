@@ -18,17 +18,17 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public Optional<Product> getProductById(int id) {
+    public Optional<Product> getProductById(Integer id) {
         return productRepository.findById(id);
     }
 
     public Product addProduct(Product product) {
-        // Set ID to 0 to ensure auto-generation by database
-        product.setId(0);
+        // Set ID to null to ensure auto-generation by database
+        product.setId(null);
         return productRepository.save(product);
     }
 
-    public Optional<Product> updateProduct(int id, Product updatedProduct) {
+    public Optional<Product> updateProduct(Integer id, Product updatedProduct) {
         return productRepository.findById(id)
                 .map(existingProduct -> {
                     existingProduct.setName(updatedProduct.getName());
@@ -37,7 +37,7 @@ public class ProductService {
                 });
     }
 
-    public boolean deleteProduct(int id) {
+    public boolean deleteProduct(Integer id) {
         if (productRepository.existsById(id)) {
             productRepository.deleteById(id);
             return true;
